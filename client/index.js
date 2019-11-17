@@ -6,7 +6,7 @@
     el: '#app',
     data: {
       str1: 'text/input.txt',
-      str2: 'text/static/matrix6x4.txt',
+      str2: 'text/static/matrix5x5.txt',
       action: 'A'
     },
     methods: {
@@ -23,22 +23,19 @@
 
  
   socket.on('action', (data) => {
-
     let mtr1 = toMatrix(data.file1); 
     if (!mtr1) {
       socket.emit('err', { err: 'некорректная входная матрица' });
     }
     else {
-      let mtr2, result, arr;
-
+      let mtr2, result;
       if (data.action === 'A') {
         mtr2 = identityMatrix(mtr1);
         result = toStr(multiply(mtr1, mtr2));
         socket.emit('write', { result });
       }
       else if (data.action === 'B') {
-        result = sparseMatrix(mtr1);
-        result = toStr(result);
+        result = toStr(sparseMatrix(mtr1));
         socket.emit('write', { result });
       }
       else if (data.action === 'C') {
@@ -62,13 +59,10 @@
         socket.emit('write', { result });
       }  
     }
-
   });
 
 
-
   function toMatrix(str) { // функция получает матрицу из строки или возвращает false (для чтения текстового файла)
-    
     let arr = [];
     let row = 0;
     let k = 0; // индекс первого значения каждого элемента матрицы (строки)
@@ -79,11 +73,9 @@
     }
 
     for (let i = 0; i < str.length; i++) {
-
       if (Object.prototype.toString.call(arr[row]) === '[object Undefined]') {
         arr[row] = [];
       }
-
       if (str[i] == '\r' && str[i+1] == '\n') {
         for (let j = k; j < i; j++) {
           m += str[j];
@@ -118,15 +110,12 @@
         }
         arr[row].push(+m);
       }
-
     }
-
     for (let j = 1; j < arr.length; j++) {
       if ( arr[0].length != arr[j].length) {
         return false;
       }
     }
-
     return arr;
   }
 
@@ -166,12 +155,12 @@
         }
       }
     }
+    console.log(arr); // вывод единичной матрицы в консоль
     return arr;
   }
 
 
   function multiply(A, B) { // функция умножает матрицы или возвращает false
-  
     let rowsA = A.length, colsA = A[0].length;
     let rowsB = B.length, colsB = B[0].length;
     let result = new Array(rowsA);  
@@ -182,10 +171,8 @@
 
     for (let i = 0; i < rowsA; i++) {
       result[i] = new Array(colsB); 
-
       for (let j = 0; j < colsB; j++) {
         result[i][j] = 0;         
-
         for (let k = 0; k < colsA; k++) {
           result[i][j] += A[i][k] * B[k][j];
         }
@@ -196,7 +183,6 @@
 
 
   function gauss(matrix) { // функция преобразует матрицу методом гаусса
-
     for (let row = 0; row < matrix.length - 1; row++) { // приводит к ступенчатому виду 
       swap(matrix, row);
       let base = matrix[row];
@@ -212,7 +198,6 @@
           }
       }
     }
-
     // обратный ход
     for (let i = matrix.length - 1; i >= 0; i--) {
         let col = matrix[i];
@@ -224,16 +209,13 @@
         div = col[i];
         col[matrix.length] = div ? v / div : 0;
     }
-
     return matrix.map(item => item[matrix.length] );
   }
 
 
   function swap(matrix, row) { // функция меняет местами строки матрицы
-
     let target = row;
     let max = matrix[row][row];
-
     for (let i = row + 1; i < matrix.length; i++) {
         if (max === 0 || matrix[i][row] > max) {
             max = matrix[i][row];
@@ -248,17 +230,14 @@
   }
 
 
-  function sparseMatrix(matrix) {
-
+  function sparseMatrix(matrix) { // функция создает случайную разреженную матрицу и умножает
     let sparse = new Array(matrix[0].length);  
     let arrValue = [], arrRow = [], arrCol = [];
     let result = [];
   
     for (let i = 0; i < matrix[0].length; i++) {
       sparse[i] = new Array(matrix[0].length); 
-  
       for (let j = 0; j < matrix[0].length; j++) {
-
         if ( randomInteger(0, 9) ) {
           sparse[i][j] = 0; 
         }
@@ -270,14 +249,12 @@
         }     
       }
     }
-    console.log(sparse);
+    console.log(sparse);                       // вывод случайной разреженной матрицы в консоль
 
     for (let i = 0; i < matrix.length; i++) {
       result[i] = new Array(matrix[0].length); 
-
       for (let j = 0; j < matrix[0].length; j++) {
         result[i][j] = 0;         
-  
         for (let k = 0; k < arrValue.length; k++) {
           if (arrCol[k] == j) {
             result[i][j] += matrix[i][arrRow[k]] * arrValue[k];
@@ -285,12 +262,12 @@
         }
       }
     }
-    console.log(result);
     return result;
   }
 
-  function randomInteger(min, max) { // получить случайное число от (min-0.5) до (max+0.5)
-
+  
+  function randomInteger(min, max) { 
+    // получить случайное число от (min-0.5) до (max+0.5)
     let rand = min - 0.5 + Math.random() * (max - min + 1);
     return Math.round(rand);
   }

@@ -12,10 +12,10 @@ server.listen(port, () => {
 
 app.use(express.static(path.join(__dirname, 'client')));
 
+
 io.on('connection', (socket) => {
 
   socket.on('read', (data) => {
-
     let file1 = fs.readFileSync(data.str1, 'utf8');
     if (data.action === 'C') {
       let file2 = fs.readFileSync(data.str2, 'utf8');
@@ -26,13 +26,13 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('write', (data) => {
 
+  socket.on('write', (data) => {
     fs.writeFileSync('text/output.txt', data.result);
   });
 
+
   socket.on('err', (data) => {
-    
     console.log(data.err);
   });
 
