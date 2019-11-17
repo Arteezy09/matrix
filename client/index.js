@@ -230,12 +230,12 @@
   }
 
 
-  function sparseMatrix(matrix) { // функция создает случайную разреженную матрицу и умножает
+  function sparseMatrix(matrix) { // функция для разреженной матрицы
     let sparse = new Array(matrix[0].length);  
     let arrValue = [], arrRow = [], arrCol = [];
     let result = [];
-  
-    for (let i = 0; i < matrix[0].length; i++) {
+    
+    for (let i = 0; i < matrix[0].length; i++) { // создание случайной разреженной матрицы
       sparse[i] = new Array(matrix[0].length); 
       for (let j = 0; j < matrix[0].length; j++) {
         if ( randomInteger(0, 9) ) {
@@ -243,15 +243,15 @@
         }
         else {
           sparse[i][j] = randomInteger(1, 9); 
-          arrValue.push(sparse[i][j]);
-          arrRow.push(i);
-          arrCol.push(j);
+          arrValue.push(sparse[i][j]); // создание массива значений
+          arrRow.push(i);              // создание массива строк
+          arrCol.push(j);              // создание массива столбцов
         }     
       }
     }
     console.log(sparse);                       // вывод случайной разреженной матрицы в консоль
 
-    for (let i = 0; i < matrix.length; i++) {
+    for (let i = 0; i < matrix.length; i++) { // умножение матрицы matrix на случайную разреженную матрицу
       result[i] = new Array(matrix[0].length); 
       for (let j = 0; j < matrix[0].length; j++) {
         result[i][j] = 0;         
