@@ -3,22 +3,22 @@
   let socket = io();
 
   let app = new Vue({
-    el: '#app',
-    data: {
-      str1: 'text/input.txt',
-      str2: 'text/static/matrix5x5.txt',
-      action: 'A'
-    },
-    methods: {
-      doAction() {
-        socket.emit('read', { str1: this.str1, str2: this.str2, action: this.action });     
+      el: '#app',
+      data: {
+          str1: 'text/input.txt',
+          str2: 'text/static/matrix5x5.txt',
+          action: 'A'
+      },
+      methods: {
+          doAction() {
+              socket.emit('read', { str1: this.str1, str2: this.str2, action: this.action });     
+          }
+      },
+      computed: {
+          show() {
+              return this.action === 'C';
+          }
       }
-    },
-    computed: {
-      show() {
-        return this.action === 'C';
-      }
-    }
   })
 
  
