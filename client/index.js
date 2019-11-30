@@ -273,3 +273,43 @@
   }
 
 })();
+
+
+  socket.on('action', (data) => {
+      let mtr1 = toMatrix(data.file1); 
+      if (!mtr1) {
+          socket.emit('err', { err: 'некорректная входная матрица' });
+      }
+      else {
+          let mtr2, result;
+          if (data.action === 'A') {
+              mtr2 = identityMatrix(mtr1);
+              result = toStr(multiply(mtr1, mtr2));
+              socket.emit('write', { result });
+          }
+          else if (data.action === 'B') {
+              result = toStr(sparseMatrix(mtr1));
+              socket.emit('write', { result });
+          }
+          else if (data.action === 'C') {
+              mtr2 = toMatrix(data.file2);
+              if (!mtr2) {
+                  socket.emit('err', { err: 'некорректная статичная матрица' });
+              }
+              else {
+                  let mult = multiply(mtr1, mtr2);
+                  if (!mult) {
+                      socket.emit('err', { err: 'количество столбцов 1-ой матрицы не совпадает с количеством строк 2-ой матрицы' });
+                  }
+                  else {
+                      result = toStr(mult);
+                      socket.emit('write', { result });
+                  }
+              }
+          }
+          else {
+              result = gauss(mtr1); 
+              socket.emit('write', { result });
+          }  
+      }
+  });
